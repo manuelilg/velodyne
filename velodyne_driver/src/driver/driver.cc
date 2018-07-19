@@ -70,6 +70,11 @@ VelodyneDriver::VelodyneDriver(ros::NodeHandle node,
     }
   std::string deviceName(std::string("Velodyne ") + model_full_name);
 
+
+  if (private_nh.hasParam("subscans")) {
+    packet_rate = 1.0;
+  }
+
   private_nh.param("rpm", config_.rpm, 600.0);
   ROS_INFO_STREAM(deviceName << " rotating at " << config_.rpm << " RPM");
   double frequency = (config_.rpm / 60.0);     // expected Hz rate
