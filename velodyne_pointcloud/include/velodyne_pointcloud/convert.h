@@ -17,6 +17,8 @@
 #ifndef _VELODYNE_POINTCLOUD_CONVERT_H_
 #define _VELODYNE_POINTCLOUD_CONVERT_H_ 1
 
+#include <vector>
+
 #include <ros/ros.h>
 
 #include <sensor_msgs/PointCloud2.h>
@@ -44,6 +46,8 @@ namespace velodyne_pointcloud
     boost::shared_ptr<dynamic_reconfigure::Server<velodyne_pointcloud::
       CloudNodeConfig> > srv_;
     
+    std::vector<velodyne_msgs::VelodyneScan::ConstPtr> scans_vector_;
+
     boost::shared_ptr<velodyne_rawdata::RawData> data_;
     ros::Subscriber velodyne_scan_;
     ros::Publisher output_;

@@ -58,6 +58,13 @@ namespace velodyne_pointcloud
     if (output_.getNumSubscribers() == 0)         // no one listening?
       return;                                     // avoid much work
 
+
+    scans_vector_.push_back(scanMsg);
+    if (scans_vector_.size() < ceil(754 / 10)) {
+      return;
+    }
+
+
     // allocate a point cloud with same time and frame ID as raw data
     velodyne_rawdata::VPointCloud::Ptr
       outMsg(new velodyne_rawdata::VPointCloud());
@@ -67,15 +74,16 @@ namespace velodyne_pointcloud
     outMsg->height = 1;
 
     // process each packet provided by the driver
-    for (size_t i = 0; i < scanMsg->packets.size(); ++i)
+    for (size_t i = 0; i < scans_vector_.size(); ++i)
       {
-        data_->unpack(scanMsg->packets[i], *outMsg);
+        data_->unpack(scans_vector_[i]->packets[0], *outMsg);
       }
 
     // publish the accumulated cloud message
     ROS_DEBUG_STREAM("Publishing " << outMsg->height * outMsg->width
                      << " Velodyne points, time: " << outMsg->header.stamp);
     output_.publish(outMsg);
+    scans_vector_.clear();
   }
 
 } // namespace velodyne_pointcloud
