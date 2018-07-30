@@ -72,7 +72,11 @@ VelodyneDriver::VelodyneDriver(ros::NodeHandle node,
 
 
   if (private_nh.hasParam("subscans")) {
-    packet_rate = 1.0;
+    bool subscans;
+    private_nh.getParam("subscans", subscans);
+    if (subscans) {
+      packet_rate = 1.0;
+    }
   }
 
   private_nh.param("rpm", config_.rpm, 600.0);

@@ -14,7 +14,7 @@
   <arg name="repeat_delay" default="0.0" />
   <arg name="rpm" default="600.0" />
   <arg name="cut_angle" default="-0.01" />
-  <arg name="subscans" default="true" />
+  <arg name="subscans" default="false" />
 
   <!-- start nodelet manager -->
   <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager" />
