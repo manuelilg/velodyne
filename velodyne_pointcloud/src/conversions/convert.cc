@@ -37,6 +37,8 @@ namespace velodyne_pointcloud
     f = boost::bind (&Convert::callback, this, _1, _2);
     srv_->setCallback (f);
 
+    node.param<int>("n_accumulated_packets", n_accumulated_packets_, 0);
+
     // subscribe to VelodyneScan packets
     velodyne_scan_ =
       node.subscribe("velodyne_packets", 10,
@@ -58,12 +60,12 @@ namespace velodyne_pointcloud
     if (output_.getNumSubscribers() == 0)         // no one listening?
       return;                                     // avoid much work
 
-
     scans_vector_.push_back(scanMsg);
-    if (scans_vector_.size() < ceil(754 / 10)) {
-      return;
+    if (n_accumulated_packets_ != 0) {
+      if (scans_vector_.size() < n_accumulated_packets_) {
+        return;
+      }
     }
-
 
     // allocate a point cloud with same time and frame ID as raw data
     velodyne_rawdata::VPointCloud::Ptr
@@ -74,10 +76,12 @@ namespace velodyne_pointcloud
     outMsg->height = 1;
 
     // process each packet provided by the driver
-    for (size_t i = 0; i < scans_vector_.size(); ++i)
-      {
-        data_->unpack(scans_vector_[i]->packets[0], *outMsg);
+    for (size_t j = 0; j < scans_vector_.size(); ++j) {
+      velodyne_msgs::VelodyneScan::ConstPtr scan_message = scans_vector_[j];
+      for (size_t i = 0; i < scan_message->packets.size(); ++i) {
+        data_->unpack(scan_message->packets[i], *outMsg);
       }
+    }
 
     // publish the accumulated cloud message
     ROS_DEBUG_STREAM("Publishing " << outMsg->height * outMsg->width

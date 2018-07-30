@@ -47,6 +47,7 @@ namespace velodyne_pointcloud
       CloudNodeConfig> > srv_;
     
     std::vector<velodyne_msgs::VelodyneScan::ConstPtr> scans_vector_;
+    int n_accumulated_packets_;
 
     boost::shared_ptr<velodyne_rawdata::RawData> data_;
     ros::Subscriber velodyne_scan_;
