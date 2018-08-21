@@ -37,7 +37,9 @@ namespace velodyne_pointcloud
     f = boost::bind (&Convert::callback, this, _1, _2);
     srv_->setCallback (f);
 
-    node.param<int>("n_accumulated_packets", n_accumulated_packets_, 0);
+    private_nh.param<int>("n_accumulated_packets", n_accumulated_packets_, 0);
+
+    ROS_INFO_STREAM("n_accumulated_packets: " << n_accumulated_packets_);
 
     // subscribe to VelodyneScan packets
     velodyne_scan_ =
